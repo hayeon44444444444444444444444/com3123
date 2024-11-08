@@ -30,7 +30,7 @@ pastel_colors = [
 ]
 
 def your_score(score):
-    value = score_font.render("스코어: " + str(score), True, black)
+    value = score_font.render("A: " + str(score), True, black)
     dis.blit(value, [10, 10])
 
 def draw_heart(x, y):
@@ -67,7 +67,7 @@ def gameLoop():
 
         while game_close == True:
             dis.fill(white)
-            message("Game Over! Press C-Play Again or Q-Quit", (255, 0, 0))
+            message("fucking", (255, 0, 0))
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -137,3 +137,4 @@ def gameLoop():
     quit()
 
 gameLoop()
+
