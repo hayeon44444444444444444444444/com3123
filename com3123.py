@@ -25,3 +25,115 @@ pastel_colors = [
     (255, 182, 193),
     (255, 218, 185),
     (173, 216, 230),
+    (144, 238, 144),
+    (255, 255, 224),
+]
+
+def your_score(score):
+    value = score_font.render("스코어: " + str(score), True, black)
+    dis.blit(value, [10, 10])
+
+def draw_heart(x, y):
+    pygame.draw.polygon(dis, (255, 0, 0), [(x + 5, y + 3), (x, y + 8), (x + 10, y + 8)])
+
+def our_snake(snake_block, snake_list):
+    for x in snake_list:
+        pygame.draw.rect(dis, black, [x[0], x[1], snake_block, snake_block])
+
+def message(msg, color):
+    mesg = font_style.render(msg, True, color)
+    dis.blit(mesg, [(dis_width - mesg.get_width()) / 2, (dis_height - mesg.get_height()) / 2])
+
+def gameLoop():
+    game_over = False
+    game_close = False
+
+    x1 = dis_width / 2
+    y1 = dis_height / 2
+
+    x1_change = 0
+    y1_change = 0
+
+    snake_List = []
+    Length_of_snake = 1
+    score = 0
+
+    foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    special_foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    special_foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+
+    while not game_over:
+
+        while game_close == True:
+            dis.fill(white)
+            message("Game Over! Press C-Play Again or Q-Quit", (255, 0, 0))
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        game_over = True
+                        game_close = False
+                    if event.key == pygame.K_c:
+                        gameLoop()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    x1_change = -snake_block
+                    y1_change = 0
+                elif event.key == pygame.K_RIGHT:
+                    x1_change = snake_block
+                    y1_change = 0
+                elif event.key == pygame.K_UP:
+                    y1_change = -snake_block
+                    x1_change = 0
+                elif event.key == pygame.K_DOWN:
+                    y1_change = snake_block
+                    x1_change = 0
+
+        if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
+            game_close = True
+
+        x1 += x1_change
+        y1 += y1_change
+        dis.fill(white)
+        pygame.draw.rect(dis, (0, 255, 0), [foodx, foody, snake_block, snake_block])
+        draw_heart(special_foodx, special_foody)
+        
+        snake_Head = []
+        snake_Head.append(x1)
+        snake_Head.append(y1)
+        snake_List.append(snake_Head)
+        if len(snake_List) > Length_of_snake:
+            del snake_List[0]
+
+        for x in snake_List[:-1]:
+            if x == snake_Head:
+                game_close = True
+
+        our_snake(snake_block, snake_List)
+        your_score(score)
+        pygame.display.update()
+
+        if x1 == foodx and y1 == foody:
+            foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+            foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+            Length_of_snake += 1
+            score += 1
+
+        if x1 == special_foodx and y1 == special_foody:
+            special_foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+            special_foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+            Length_of_snake += 2
+            score += 3
+
+        clock.tick(snake_speed)
+
+    pygame.quit()
+    quit()
+
+gameLoop()
